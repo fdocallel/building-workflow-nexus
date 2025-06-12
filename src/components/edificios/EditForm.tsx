@@ -64,7 +64,15 @@ export function EditForm({ edificio, onClose }: EditFormProps) {
 
     let updateData: Partial<Edificio> = {};
 
-    if (edificio.estado === 'Procesos' && userRole === 'procesos') {
+    // Manager tiene permisos completos
+    if (userRole === 'manager') {
+      updateData = {
+        num_edificios: formData.num_edificios,
+        tipologia: formData.tipologia,
+        equipamiento: formData.equipamiento,
+        analisis_estructural: formData.analisis_estructural
+      };
+    } else if (edificio.estado === 'Procesos' && userRole === 'procesos') {
       updateData = {
         num_edificios: formData.num_edificios,
         tipologia: formData.tipologia
@@ -83,10 +91,11 @@ export function EditForm({ edificio, onClose }: EditFormProps) {
   };
 
   const canEdit = () => {
-    return (edificio.estado === 'Procesos' && userRole === 'procesos') ||
+    return userRole === 'manager' ||
+           userRole === 'coordinacion' ||
+           (edificio.estado === 'Procesos' && userRole === 'procesos') ||
            (edificio.estado === 'Mechanical' && userRole === 'mechanical') ||
-           (edificio.estado === 'Estructuras' && userRole === 'estructuras') ||
-           userRole === 'coordinacion';
+           (edificio.estado === 'Estructuras' && userRole === 'estructuras');
   };
 
   if (!canEdit()) {
@@ -110,7 +119,7 @@ export function EditForm({ edificio, onClose }: EditFormProps) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {edificio.estado === 'Procesos' && userRole === 'procesos' && (
+          {(userRole === 'manager' || (edificio.estado === 'Procesos' && userRole === 'procesos')) && (
             <>
               <div>
                 <Label htmlFor="num_edificios">Número de Edificios</Label>
@@ -138,7 +147,7 @@ export function EditForm({ edificio, onClose }: EditFormProps) {
             </>
           )}
 
-          {edificio.estado === 'Mechanical' && userRole === 'mechanical' && (
+          {(userRole === 'manager' || (edificio.estado === 'Mechanical' && userRole === 'mechanical')) && (
             <div>
               <Label htmlFor="equipamiento">Equipamiento (JSON)</Label>
               <Textarea
@@ -158,7 +167,7 @@ export function EditForm({ edificio, onClose }: EditFormProps) {
             </div>
           )}
 
-          {edificio.estado === 'Estructuras' && userRole === 'estructuras' && (
+          {(userRole === 'manager' || (edificio.estado === 'Estructuras' && userRole === 'estructuras')) && (
             <div>
               <Label htmlFor="analisis_estructural">Análisis Estructural (JSON)</Label>
               <Textarea

@@ -43,7 +43,8 @@ export function EdificiosListWithEdit() {
   };
 
   const canEditEdificio = (edificio: Edificio) => {
-    return userRole === 'coordinacion' ||
+    return userRole === 'manager' ||
+      userRole === 'coordinacion' ||
       (edificio.estado === 'Procesos' && userRole === 'procesos') ||
       (edificio.estado === 'Mechanical' && userRole === 'mechanical') ||
       (edificio.estado === 'Estructuras' && userRole === 'estructuras');

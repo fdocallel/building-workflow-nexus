@@ -19,7 +19,8 @@ export function KanbanColumn({ id, title, edificios, userRole }: KanbanColumnPro
     id,
   });
 
-  const canDrop = userRole === 'coordinacion' || 
+  const canDrop = userRole === 'manager' ||
+    userRole === 'coordinacion' || 
     (userRole === 'procesos' && title === 'Procesos') ||
     (userRole === 'mechanical' && title === 'Mechanical') ||
     (userRole === 'estructuras' && title === 'Estructuras') ||
