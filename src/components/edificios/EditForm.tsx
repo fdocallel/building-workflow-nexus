@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -105,7 +106,7 @@ export function EditForm({ edificio, onClose }: EditFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Editar Edificio - {edificio.codigo}</CardTitle>
+        <CardTitle>Editar Edificio - {edificio.Code}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

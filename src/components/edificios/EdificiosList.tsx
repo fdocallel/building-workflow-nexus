@@ -63,7 +63,7 @@ export function EdificiosList() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
-                <p><strong>Código:</strong> {edificio.codigo}</p>
+                <p><strong>Código:</strong> {edificio.Code}</p>
                 <p><strong>Proyecto:</strong> {edificio.proyecto}</p>
                 {edificio.tipologia && (
                   <p><strong>Tipología:</strong> {edificio.tipologia}</p>

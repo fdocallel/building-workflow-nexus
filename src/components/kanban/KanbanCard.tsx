@@ -49,7 +49,7 @@ export function KanbanCard({ edificio, isDragging = false, canDrag = true }: Kan
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono bg-muted px-2 py-1 rounded">
-                {edificio.codigo}
+                {edificio.Code}
               </span>
               {canDrag && <GripVertical className="h-3 w-3 text-muted-foreground" />}
             </div>
