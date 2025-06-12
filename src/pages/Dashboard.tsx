@@ -2,8 +2,10 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Header } from '@/components/layout/Header';
-import { EdificiosList } from '@/components/edificios/EdificiosList';
+import { Dashboard as DashboardComponent } from '@/components/dashboard/Dashboard';
+import { EdificiosListWithEdit } from '@/components/edificios/EdificiosListWithEdit';
 import { LoginForm } from '@/components/auth/LoginForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -64,7 +66,20 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <EdificiosList />
+        <Tabs defaultValue="dashboard" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="edificios">Edificios</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="dashboard">
+            <DashboardComponent />
+          </TabsContent>
+          
+          <TabsContent value="edificios">
+            <EdificiosListWithEdit />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

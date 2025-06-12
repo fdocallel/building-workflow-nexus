@@ -50,7 +50,7 @@ export function KanbanBoard() {
   });
 
   const updateEstadoMutation = useMutation({
-    mutationFn: async ({ id, newEstado }: { id: number; newEstado: WorkflowState }) => {
+    mutationFn: async ({ id, newEstado, codigo }: { id: number; newEstado: WorkflowState; codigo: string }) => {
       const { error } = await supabase
         .from('edificio')
         .update({ 
@@ -60,6 +60,20 @@ export function KanbanBoard() {
         .eq('id', id);
 
       if (error) throw error;
+
+      // Enviar webhook a Slack
+      try {
+        await fetch('/api/slack-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ codigo, estado: newEstado }),
+        });
+      } catch (webhookError) {
+        console.error('Error sending Slack webhook:', webhookError);
+        // No fallar la operación si el webhook falla
+      }
     },
     onSuccess: (_, { newEstado }) => {
       queryClient.invalidateQueries({ queryKey: ['edificios-kanban'] });
@@ -100,8 +114,15 @@ export function KanbanBoard() {
 
     const edificioId = parseInt(active.id as string);
     const newEstado = over.id as WorkflowState;
+    const edificio = edificios?.find(e => e.id === edificioId);
     
-    updateEstadoMutation.mutate({ id: edificioId, newEstado });
+    if (edificio) {
+      updateEstadoMutation.mutate({ 
+        id: edificioId, 
+        newEstado, 
+        codigo: edificio.Code 
+      });
+    }
   };
 
   const activeEdificio = activeId ? edificios?.find(e => e.id.toString() === activeId) : null;

@@ -12,7 +12,8 @@ export type Database = {
       edificio: {
         Row: {
           analisis_estructural: Json | null
-          codigo: string
+          Code: string
+          created_at: string
           descripcion: string | null
           equipamiento: Json | null
           estado: Database["public"]["Enums"]["workflow_state"] | null
@@ -26,7 +27,8 @@ export type Database = {
         }
         Insert: {
           analisis_estructural?: Json | null
-          codigo: string
+          Code: string
+          created_at?: string
           descripcion?: string | null
           equipamiento?: Json | null
           estado?: Database["public"]["Enums"]["workflow_state"] | null
@@ -40,7 +42,8 @@ export type Database = {
         }
         Update: {
           analisis_estructural?: Json | null
-          codigo?: string
+          Code?: string
+          created_at?: string
           descripcion?: string | null
           equipamiento?: Json | null
           estado?: Database["public"]["Enums"]["workflow_state"] | null
