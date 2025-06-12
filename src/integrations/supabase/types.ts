@@ -99,6 +99,7 @@ export type Database = {
         | "estructuras"
         | "geotecnia"
         | "coordinacion"
+        | "manager"
       workflow_state:
         | "Procesos"
         | "Mechanical"
@@ -227,6 +228,7 @@ export const Constants = {
         "estructuras",
         "geotecnia",
         "coordinacion",
+        "manager",
       ],
       workflow_state: [
         "Procesos",
