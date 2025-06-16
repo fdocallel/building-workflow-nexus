@@ -22,12 +22,18 @@ export function EdificiosListWithEdit() {
   const { data: edificios, isLoading, error } = useQuery({
     queryKey: ['edificios'],
     queryFn: async () => {
+      console.log('Fetching edificios for list...');
       const { data, error } = await supabase
         .from('edificio')
         .select('*')
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching edificios:', error);
+        throw error;
+      }
+      
+      console.log('Edificios fetched for list:', data?.length || 0, 'records');
       return data as Edificio[];
     },
   });
@@ -59,13 +65,22 @@ export function EdificiosListWithEdit() {
   };
 
   if (isLoading) return <div className="p-4">Cargando edificios...</div>;
-  if (error) return <div className="p-4 text-red-600">Error al cargar edificios</div>;
+  
+  if (error) {
+    console.error('Query error in list:', error);
+    return <div className="p-4 text-red-600">Error al cargar edificios: {error.message}</div>;
+  }
+
+  console.log('Rendering list with edificios:', edificios?.length || 0);
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Edificios</h2>
         <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">
+            Total: {edificios?.length || 0} edificios
+          </div>
           {userRole && (
             <Badge variant="outline" className="text-sm">
               Rol: {userRole}
@@ -90,62 +105,68 @@ export function EdificiosListWithEdit() {
         </div>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {edificios?.map((edificio) => (
-          <Card key={edificio.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex justify-between items-start">
-                <span>{edificio.nombre}</span>
-                <Badge className={getStatusColor(edificio.estado || '')}>
-                  {edificio.estado}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <p><strong>Código:</strong> {edificio.Code}</p>
-                <p><strong>Proyecto:</strong> {edificio.proyecto}</p>
-                {edificio.tipologia && (
-                  <p><strong>Tipología:</strong> {edificio.tipologia}</p>
-                )}
-                {edificio.num_edificios && (
-                  <p><strong>Núm. Edificios:</strong> {edificio.num_edificios}</p>
-                )}
-                {edificio.responsable && (
-                  <p><strong>Responsable:</strong> {edificio.responsable}</p>
-                )}
-                {edificio.descripcion && (
-                  <p className="text-gray-600">{edificio.descripcion}</p>
-                )}
-              </div>
-              
-              {canEdit(edificio) && (
-                <div className="mt-4">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setEditingEdificio(edificio)}
-                      >
-                        Editar
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                      {editingEdificio && (
-                        <EditForm 
-                          edificio={editingEdificio} 
-                          onClose={() => setEditingEdificio(null)} 
-                        />
-                      )}
-                    </DialogContent>
-                  </Dialog>
+      {edificios && edificios.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-gray-500">No hay edificios registrados</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {edificios?.map((edificio) => (
+            <Card key={edificio.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex justify-between items-start">
+                  <span>{edificio.nombre}</span>
+                  <Badge className={getStatusColor(edificio.estado || '')}>
+                    {edificio.estado}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  <p><strong>Código:</strong> {edificio.Code}</p>
+                  <p><strong>Proyecto:</strong> {edificio.proyecto}</p>
+                  {edificio.tipologia && (
+                    <p><strong>Tipología:</strong> {edificio.tipologia}</p>
+                  )}
+                  {edificio.num_edificios && (
+                    <p><strong>Núm. Edificios:</strong> {edificio.num_edificios}</p>
+                  )}
+                  {edificio.responsable && (
+                    <p><strong>Responsable:</strong> {edificio.responsable}</p>
+                  )}
+                  {edificio.descripcion && (
+                    <p className="text-gray-600">{edificio.descripcion}</p>
+                  )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                
+                {canEdit(edificio) && (
+                  <div className="mt-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setEditingEdificio(edificio)}
+                        >
+                          Editar
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        {editingEdificio && (
+                          <EditForm 
+                            edificio={editingEdificio} 
+                            onClose={() => setEditingEdificio(null)} 
+                          />
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

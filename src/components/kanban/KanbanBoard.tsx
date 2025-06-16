@@ -36,15 +36,21 @@ export function KanbanBoard() {
   const queryClient = useQueryClient();
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const { data: edificios, isLoading } = useQuery({
+  const { data: edificios, isLoading, error } = useQuery({
     queryKey: ['edificios-kanban'],
     queryFn: async () => {
+      console.log('Fetching edificios for Kanban...');
       const { data, error } = await supabase
         .from('edificio')
         .select('*')
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching edificios:', error);
+        throw error;
+      }
+      
+      console.log('Edificios fetched:', data?.length || 0, 'records');
       return data as Edificio[];
     },
   });
@@ -131,15 +137,27 @@ export function KanbanBoard() {
     return <div className="p-4">Cargando vista Kanban...</div>;
   }
 
+  if (error) {
+    console.error('Query error:', error);
+    return <div className="p-4 text-red-600">Error al cargar edificios: {error.message}</div>;
+  }
+
+  console.log('Rendering Kanban with edificios:', edificios?.length || 0);
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Vista Kanban - Edificios</h2>
-        {userRole && (
+        <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground">
-            Rol actual: {userRole}
+            Total edificios: {edificios?.length || 0}
           </div>
-        )}
+          {userRole && (
+            <div className="text-sm text-muted-foreground">
+              Rol actual: {userRole}
+            </div>
+          )}
+        </div>
       </div>
 
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
