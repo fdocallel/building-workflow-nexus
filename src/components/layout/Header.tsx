@@ -24,7 +24,7 @@ export function Header() {
             <Waves className="h-8 w-8 text-blue-600 wave-animation" />
           </div>
           <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-            Sistema de Gestión de Edificios
+            ADAPTIVE
           </h1>
         </div>
         
